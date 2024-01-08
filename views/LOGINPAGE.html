@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .login,
+        .password {
+            display: flex;
+            width: 280px;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .submit {
+            margin-top: 13px;
+            padding: 5px 10px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* border:2px solid grey; */
+            padding: 20px 17px;
+            box-shadow: 0px 0px 10px grey;
+
+        }
+
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <h1>LOGIN PAGE</h1>
+        <div class="login"> Login:
+            <input type="text" placeholder="Username" id="login" name="login">
+        </div>
+        <div class="password"> Password:
+            <input type="password" placeholder="Password" id="password" name="password">
+        </div>
+        <input type="submit" id="submit" class="submit" name="submit" value="login">
+        <a href="/signup"> Create Account/Signup </a>
+    </div>
+
+</body>
+<script>
+    const submit = document.getElementById("submit");
+    const login = document.getElementById("login");
+    const password = document.getElementById("password");
+    submit.addEventListener("click", () => {
+        if (login.value == "" || password.value == "") {
+            alert("please enter credentials");
+            return
+        }
+        fetch("http://localhost:3000/login", {
+            method: "post",
+            headers: {
+                "content-type": "application/JSON",
+            },
+            body: JSON.stringify({
+                email: login.value,
+                password: password.value
+            }),
+            redirect: "follow"
+        }).then(res => {
+            if (res.status == 404) {
+                alert("Please firstly signup the page")
+                return
+            }
+            if(res.status==409){
+                alert("Incorrect Password")
+                return
+            }
+            window.location.href = res.url// jump to dashboard
+        }).catch(err => {
+            alert(err)
+        })
+    })
+
+
+</script>
+
+</html>

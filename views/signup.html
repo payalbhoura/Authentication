@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .name,
+        .password,
+        .email {
+            display: flex;
+            width: 280px;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .submit {
+            margin-top: 13px;
+            padding: 5px 10px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* border:2px solid grey; */
+            padding: 20px 17px;
+            box-shadow: 0px 0px 10px grey;
+
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <h1>SIGN UP</h1>
+        <div class="name"> First Name:
+            <input type="text" id="name" placeholder="name" name="firstname" required>
+        </div>
+        <div class="email"> Username:
+            <input type="email" id="mail" placeholder="email" name="email" required>
+        </div>
+        <div class="password"> Password:
+            <input type="password" id="password" placeholder="Password" name="password" required>
+        </div>
+        <input type="submit" id="signup" class="submit" name="submit" value="signup">
+        <a href="/login"> Already a member? login </a>
+
+    </div>
+
+
+</body>
+<script>
+    const name = document.getElementById("name");
+    const email = document.getElementById("mail");
+    const password = document.getElementById("password");
+    const signup = document.getElementById("signup");
+
+    signup.addEventListener("click", () => {
+        if (name.value.length < 5) {
+            alert("Please Enter atleast 5 character in Name");
+            return
+        }
+        if (!email.value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)) {
+            alert("Enter valid email || eg:(like@gmail.com)")
+            return
+        }
+        if (password.value.length < 8) {
+            alert("Password must be 8 character long")
+            return
+        }
+
+
+
+        fetch("http://localhost:3000/signup", {
+            method: "post",
+            headers: {
+                "content-type": "application/JSON"
+            },
+            body: JSON.stringify({
+                name: name.value,
+                email: email.value,
+                password: password.value
+            }),
+            redirect:"follow"
+        }).then((res) => {//front end maidata ko shoe krna hai 
+            console.log(res.status==409);
+            if (res.status === 409) {
+
+                alert("This email is already exist||Please Enter another email ");
+                return
+            }
+            if (res.redirected)//302
+                {
+                alert("successfully Registered");
+                window.location.href = res.url;//window
+                }
+            else {
+                alert("something went wrong");
+            }
+
+        }).catch(err=>{
+            console.log(err);
+        })
+    })
+
+
+</script>
+
+</html>
